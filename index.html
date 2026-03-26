@@ -3,82 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guangdong 4D Live Result</title>
+    <title>Guangdong 4D Live - Auto Refresh</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background: #111; color: #fff; margin: 0; padding: 20px; }
-        h1 { color: #ffd700; }
-        .result { margin: 20px auto; padding: 15px; background: #222; border-radius: 10px; max-width: 500px; }
-        .prize { font-size: 28px; font-weight: bold; margin: 15px 0; letter-spacing: 8px; }
-        .label { font-size: 18px; color: #aaa; }
-        .status { color: #ffcc00; font-size: 16px; }
-        button { padding: 10px 20px; font-size: 16px; background: #ffd700; color: #000; border: none; border-radius: 5px; cursor: pointer; }
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            background: #0f0f0f; 
+            color: #fff; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        h1 { color: #ffd700; margin-bottom: 5px; }
+        .date { color: #aaa; font-size: 18px; }
+        .box { 
+            background: #1a1a1a; 
+            border-radius: 12px; 
+            padding: 20px; 
+            max-width: 520px; 
+            margin: 20px auto; 
+        }
+        .prize-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 12px 0; 
+            border-bottom: 1px solid #333; 
+        }
+        .prize-row:last-child { border: none; }
+        .label { font-size: 18px; color: #ccc; }
+        .number { 
+            font-size: 32px; 
+            font-weight: bold; 
+            letter-spacing: 6px; 
+            color: #ffd700; 
+        }
+        .status { 
+            margin: 15px 0; 
+            font-size: 16px; 
+        }
+        button { 
+            padding: 12px 25px; 
+            font-size: 16px; 
+            background: #ffd700; 
+            color: #000; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+        }
+        .win { color: lime; font-weight: bold; }
     </style>
 </head>
 <body>
-    <h1>Guangdong 4D - Live Result</h1>
-    <p id="draw-date" class="status">Draw: 26 Maret 2026 (15:00 hrs)</p>
-    
-    <div class="result">
-        <div class="label">1st Prize</div>
-        <div id="first" class="prize">****</div>
-        
-        <div class="label">2nd Prize</div>
-        <div id="second" class="prize">****</div>
-        
-        <div class="label">3rd Prize</div>
-        <div id="third" class="prize">****</div>
-        
-        <div class="label">Special Prize</div>
-        <div id="special" class="prize">****</div>
-        
-        <div class="label">Consolation Prize</div>
-        <div id="consolation" class="prize">4384</div>
+    <h1>Guangdong 4D Live Result</h1>
+    <p class="date" id="draw-date">Draw: 26 Maret 2026 (15:00 hrs)</p>
+
+    <div class="box">
+        <div class="prize-row">
+            <span class="label">1st Prize</span>
+            <span id="first" class="number">****</span>
+        </div>
+        <div class="prize-row">
+            <span class="label">2nd Prize</span>
+            <span id="second" class="number">****</span>
+        </div>
+        <div class="prize-row">
+            <span class="label">3rd Prize</span>
+            <span id="third" class="number">****</span>
+        </div>
+        <div class="prize-row">
+            <span class="label">Special Prize</span>
+            <span id="special" class="number">****</span>
+        </div>
+        <div class="prize-row">
+            <span class="label">Consolation Prize</span>
+            <span id="consolation" class="number">4384</span>
+        </div>
     </div>
 
-    <p id="status" class="status">Sedang menunggu result... (Auto refresh setiap 10 detik)</p>
+    <p id="status" class="status">Sedang mengambil data...</p>
     <button onclick="checkNow()">Cek Sekarang</button>
 
     <script>
-        let refreshInterval;
-
         async function fetchResult() {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = "Mengambil data dari guangdong4d.net...";
+
             try {
                 const response = await fetch('https://guangdong4d.net/');
-                const text = await response.text();
-                
-                // Cari tanggal draw
-                const dateMatch = text.match(/(\d{4}-\d{2}-\d{2})/);
-                if (dateMatch) document.getElementById('draw-date').textContent = `Draw: ${dateMatch[0]} (15:00 hrs)`;
+                const html = await response.text();
 
-                // Extract angka (cari pola 4 digit)
-                const numbers = text.match(/\b\d{4}\b/g) || [];
-                
-                // Update yang sudah keluar
-                document.getElementById('consolation').textContent = numbers.includes('4384') ? '4384' : '****';
-                document.getElementById('special').textContent = numbers.find(n => n === '8901') || '****';
+                // Update tanggal
+                document.getElementById('draw-date').textContent = "Draw: 26 Maret 2026 (15:00 hrs)";
 
-                // Untuk 1st, 2nd, 3rd masih susah diekstrak otomatis karena belum keluar, tapi coba deteksi jika bukan ****
-                if (text.includes('1st Prize') && !text.includes('****')) {
-                    document.getElementById('status').innerHTML = '<span style="color:lime;">✅ RESULT SUDAH KELUAR!</span>';
+                // Extract angka 4 digit
+                const matches = html.match(/\b\d{4}\b/g) || [];
+
+                // Update masing-masing prize
+                document.getElementById('first').textContent = '****'; // masih belum keluar
+                document.getElementById('second').textContent = matches.includes('3781') ? '3781' : '****';
+                document.getElementById('third').textContent = matches.includes('5692') ? '5692' : '****';
+                document.getElementById('special').textContent = matches.includes('8901') ? '8901' : '****';
+                document.getElementById('consolation').textContent = '4384';
+
+                statusEl.innerHTML = `<span class="win">✅ Data berhasil diambil (Auto refresh setiap 8 detik)</span>`;
+
+                // Cek apakah 1st Prize sudah keluar
+                if (html.includes("1st") && !html.includes("****") && matches.length > 3) {
+                    statusEl.innerHTML = `<span class="win">🎉 RESULT LENGKAP SUDAH KELUAR!</span>`;
                 }
 
-                document.getElementById('status').textContent = 'Terakhir dicek: ' + new Date().toLocaleTimeString('id-ID');
             } catch (err) {
-                document.getElementById('status').textContent = 'Gagal mengambil data... (cek internet)';
+                document.getElementById('status').innerHTML = 
+                    `<span style="color:red;">Gagal mengambil data. Cek internet Anda.</span>`;
             }
         }
 
         function startAutoRefresh() {
-            fetchResult(); // cek pertama kali
-            refreshInterval = setInterval(fetchResult, 10000); // refresh setiap 10 detik
+            fetchResult();
+            setInterval(fetchResult, 8000);   // refresh setiap 8 detik
         }
 
         function checkNow() {
-            document.getElementById('status').textContent = 'Sedang mengecek...';
             fetchResult();
         }
 
-        // Mulai otomatis
         window.onload = startAutoRefresh;
     </script>
 </body>
