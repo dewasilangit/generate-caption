@@ -3,194 +3,173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>⚡ Angka Sah - Auto Update</title>
+  <title>⚡ Auto Pengeluaran Togel</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .prize-number { font-size: 2.8rem; letter-spacing: 12px; font-weight: 700; }
-    .gold-border { border: 2px solid #f59e0b; box-shadow: 0 0 25px rgba(245, 158, 11, 0.5); }
+    .prize-number { font-size: 2.8rem; letter-spacing: 8px; font-weight: 700; }
   </style>
 </head>
-<body class="bg-gradient-to-br from-[#1a0f0a] to-[#2c1a14] text-white min-h-screen">
+<body class="bg-gradient-to-br from-zinc-950 to-black text-white min-h-screen">
 
-  <div class="max-w-7xl mx-auto p-6">
-    <h1 class="text-5xl font-bold text-center mb-2">ANGKA SAH</h1>
-    <p class="text-amber-400 text-center text-xl mb-8">Auto update dari link • Tanpa buka situs</p>
+  <div class="max-w-6xl mx-auto p-6">
+    <h1 class="text-4xl font-bold text-center mb-1">AUTO PENGELUARAN</h1>
+    <p class="text-amber-400 text-center mb-8">Hanya pasaran yang bisa di-auto • Refresh setiap 15 detik</p>
 
-    <!-- SEARCH -->
-    <input id="search-input" type="text" placeholder="🔎 Cari pasaran..." 
-           onkeyup="filterPasaran()" 
-           class="w-full bg-[#2c1a14] border border-amber-500 text-white rounded-3xl px-8 py-5 text-lg mb-8">
+    <input id="search" placeholder="🔎 Cari pasaran..." 
+           class="w-full bg-zinc-900 border border-amber-500 rounded-3xl px-6 py-4 mb-8 text-lg"
+           onkeyup="filterPasaran()">
 
-    <!-- DASHBOARD -->
     <div id="dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-    <!-- MODAL INPUT MANUAL (sama seperti gambar kamu) -->
-    <div id="input-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-      <div class="bg-[#1a0f0a] border-2 border-amber-500 rounded-3xl p-8 w-full max-w-lg gold-border">
-        <h2 class="text-3xl font-bold mb-6 text-center text-amber-400">INPUT HASIL MANUAL</h2>
-        
-        <select id="modal-pasaran" class="w-full bg-[#2c1a14] border border-amber-500 rounded-2xl px-6 py-4 mb-6"></select>
-        
-        <input id="modal-tanggal" type="text" value="26 Maret 2026" class="w-full bg-[#2c1a14] border border-amber-500 rounded-2xl px-6 py-4 mb-6">
-        
-        <input id="modal-angka-sah" type="text" placeholder="Angka Sah (1st Prize)" maxlength="6" 
-               class="w-full bg-[#2c1a14] border border-amber-500 rounded-2xl px-6 py-4 text-4xl text-center prize-number mb-4">
-        
-        <div class="grid grid-cols-2 gap-4 mb-8">
-          <div><input id="modal-prize2" placeholder="2nd Prize" maxlength="6" class="w-full bg-[#2c1a14] border border-amber-500 rounded-2xl px-6 py-4 text-center"></div>
-          <div><input id="modal-prize3" placeholder="3rd Prize" maxlength="6" class="w-full bg-[#2c1a14] border border-amber-500 rounded-2xl px-6 py-4 text-center"></div>
+    <!-- Modal Input Manual -->
+    <div id="modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      <div class="bg-zinc-900 border border-amber-500 rounded-3xl p-8 w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-6 text-center">Input Hasil Manual</h2>
+        <select id="pilih-pasaran" class="w-full bg-zinc-800 border border-amber-500 rounded-2xl p-4 mb-4"></select>
+        <input id="tgl" type="text" value="26 Maret 2026" class="w-full bg-zinc-800 border border-amber-500 rounded-2xl p-4 mb-4">
+        <input id="angka1" placeholder="1st Prize" maxlength="6" class="w-full bg-zinc-800 border border-amber-500 rounded-2xl p-4 text-3xl text-center mb-4">
+        <div class="grid grid-cols-2 gap-4">
+          <input id="angka2" placeholder="2nd" maxlength="6" class="w-full bg-zinc-800 border border-amber-500 rounded-2xl p-4 text-center">
+          <input id="angka3" placeholder="3rd" maxlength="6" class="w-full bg-zinc-800 border border-amber-500 rounded-2xl p-4 text-center">
         </div>
-
-        <button onclick="saveResult()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-bold py-5 rounded-2xl text-xl mb-3">💾 SIMPAN</button>
-        <button onclick="hideInputModal()" class="w-full border border-amber-500 text-amber-400 font-bold py-5 rounded-2xl">BATAL</button>
-        
-        <div onclick="previewTwitter()" class="text-center mt-6 text-amber-400 cursor-pointer">📸 Preview Caption Twitter</div>
+        <button onclick="simpanHasil()" class="w-full mt-6 bg-amber-500 hover:bg-amber-600 text-black font-bold py-4 rounded-2xl">SIMPAN</button>
       </div>
-    </div>
-
-    <div class="text-center text-xs text-amber-300 mt-10">
-      Foshan Toto = AUTO UPDATE setiap 30 detik<br>
-      Pasaran lain = Manual (klik Edit)
     </div>
   </div>
 
   <script>
-    const pasaranList = [ /* semua link kamu */ 
+    // Hanya pasaran yang bisa di-auto
+    const pasaranAuto = ["FOSHAN", "CHENGDU", "GUANGDONG", "CHONGQING", "TOTO BEIJING", "FUZHOU"];
+
+    // Semua pasaran (auto + manual)
+    const semuaPasaran = [
+      ...pasaranAuto,
       "KENTUCKY MID","ROMA","FLORIDA MID","MONACO","NEWYORK MID","TURIN","ITALY","CAROLINA DAY",
       "CUBA","FRANCE","MADRID","OREGON 03","BULGARIA","HUNGARY","MIAMI","OREGON 06","CALIFORNIA",
       "FLORIDA EVE","OREGON 09","NEWYORK EVE","KENTUCKY EVE","ECUADOR","CAROLINA EVE","AUSTRIA",
-      "CAMBODIA","FOSHAN","OREGON 12","BULLSEYE","CHILE","LAOS","SYDNEY","CHENGDU","GUANGDONG",
-      "CHINA","CHONGQING","PHILIPPINES","JAPAN","KOWLOON","SINGAPORE","JEJU","TOTO BEIJING",
-      "FUZHOU","CYPRUS","TAIWAN","TAICHUNG","MEXICO","ICELAND","OSLO","BHUTAN","HAITI",
-      "HONGKONG","DENVER","TORONTO"
+      "CAMBODIA","OREGON 12","BULLSEYE","CHILE","LAOS","SYDNEY","CHINA","PHILIPPINES","JAPAN",
+      "KOWLOON","SINGAPORE","JEJU","CYPRUS","TAIWAN","TAICHUNG","MEXICO","ICELAND","OSLO",
+      "BHUTAN","HAITI","HONGKONG","DENVER","TORONTO"
     ];
 
-    let results = JSON.parse(localStorage.getItem('angkaSahResults')) || {};
+    let dataHasil = JSON.parse(localStorage.getItem('togelHasil')) || {};
 
-    // AUTO FETCH KHUSUS FOSHAN (sudah terbukti berhasil)
-    async function fetchFoshan() {
+    async function ambilAuto() {
       const proxy = "https://corsproxy.io/?";
-      const url = "https://foshantoto.com/results";
-      try {
-        const res = await fetch(proxy + encodeURIComponent(url));
-        const html = await res.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-        const rows = doc.querySelectorAll("table tr");
-        
-        if (rows.length > 1) {
-          const latestRow = rows[1]; // baris pertama setelah header
-          const cells = latestRow.querySelectorAll("td");
-          if (cells.length >= 4) {
-            const date = cells[1].textContent.trim();
-            let first = cells[2].textContent.trim().replace(/\s+/g, '');
-            let second = cells[3].textContent.trim().replace(/\s+/g, '');
-            let third = cells[4].textContent.trim().replace(/\s+/g, '');
+      for (let nama of pasaranAuto) {
+        try {
+          let url = "";
+          if (nama === "FOSHAN") url = "https://foshantoto.com/";
+          else if (nama === "CHENGDU") url = "https://chengdutoto.com/";
+          else if (nama === "GUANGDONG") url = "https://guangdong4d.net/";
+          else if (nama === "CHONGQING") url = "https://chongqing4d.com/";
+          else if (nama === "TOTO BEIJING") url = "https://totobeijing4d.com/";
+          else if (nama === "FUZHOU") url = "https://totofuzhou.com/";
 
-            results["FOSHAN"] = {
-              date: date,
-              angkaSah: first,
-              prize2: second,
-              prize3: third
-            };
-            localStorage.setItem('angkaSahResults', JSON.stringify(results));
-            renderDashboard();
+          const html = await (await fetch(proxy + encodeURIComponent(url))).text();
+          const doc = new DOMParser().parseFromString(html, "text/html");
+
+          // Cari angka utama (1st Prize)
+          let prize1 = "";
+          const candidates = doc.querySelectorAll("div.text-6xl, div.text-5xl, .font-bold, .prize, td");
+          for (let el of candidates) {
+            let text = el.textContent.trim().replace(/\s+/g, '');
+            if (text.length === 6 && /^\d{6}$/.test(text)) {
+              prize1 = text;
+              break;
+            }
           }
-        }
-      } catch(e) {}
+
+          if (prize1) {
+            dataHasil[nama] = {
+              tanggal: "26 Maret 2026",
+              prize1: prize1,
+              prize2: "—",
+              prize3: "—"
+            };
+          }
+        } catch(e) {}
+      }
+      localStorage.setItem('togelHasil', JSON.stringify(dataHasil));
     }
 
-    function renderDashboard(filtered = null) {
-      const container = document.getElementById('dashboard');
-      container.innerHTML = '';
+    function renderDashboard(filter = "") {
+      const container = document.getElementById("dashboard");
+      container.innerHTML = "";
 
-      const list = filtered || pasaranList;
-      list.forEach(name => {
-        const data = results[name] || { date: '-', angkaSah: '—', prize2: '—', prize3: '—' };
-        const isAuto = (name === "FOSHAN");
+      semuaPasaran.forEach(nama => {
+        if (filter && !nama.toUpperCase().includes(filter)) return;
 
-        const card = document.createElement("div");
-        card.className = `bg-[#2c1a14] border border-amber-500/30 rounded-3xl p-6 hover:border-amber-400`;
-        card.innerHTML = `
-          <div class="flex justify-between">
-            <h3 class="text-2xl font-bold">${name}</h3>
-            ${isAuto ? `<span class="bg-green-500 text-black text-xs px-3 py-1 rounded-2xl font-bold">AUTO</span>` : ''}
-          </div>
-          <div class="text-amber-300 text-sm my-2">${data.date}</div>
-          
-          <div class="text-center">
-            <div class="text-amber-400 text-xs">ANGKA SAH</div>
-            <div class="prize-number text-amber-300">${data.angkaSah}</div>
-          </div>
+        const info = dataHasil[nama] || {tanggal: "-", prize1: "—", prize2: "—", prize3: "—"};
 
-          <div class="grid grid-cols-2 gap-4 mt-6 text-sm">
-            <div class="text-center"><div class="text-amber-400/70">2ND</div><div class="font-mono">${data.prize2}</div></div>
-            <div class="text-center"><div class="text-amber-400/70">3RD</div><div class="font-mono">${data.prize3}</div></div>
-          </div>
+        const isAuto = pasaranAuto.includes(nama);
 
-          <button onclick="editResult('${name}')" class="mt-6 w-full text-xs bg-amber-500 text-black py-2 rounded-2xl">EDIT / INPUT MANUAL</button>
-        `;
-        container.appendChild(card);
+        const card = `
+          <div class="bg-zinc-900 border ${isAuto ? 'border-green-500' : 'border-zinc-700'} rounded-3xl p-6">
+            <div class="flex justify-between mb-3">
+              <h3 class="text-xl font-bold">${nama}</h3>
+              ${isAuto ? '<span class="text-green-400 text-xs font-bold">AUTO</span>' : ''}
+            </div>
+            <p class="text-amber-300 text-sm mb-4">${info.tanggal}</p>
+            
+            <div class="text-center">
+              <p class="text-amber-400 text-xs">1ST PRIZE</p>
+              <p class="prize-number text-amber-100">${info.prize1}</p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mt-6 text-sm">
+              <div class="text-center"><span class="text-amber-400/70">2ND</span><br>${info.prize2}</div>
+              <div class="text-center"><span class="text-amber-400/70">3RD</span><br>${info.prize3}</div>
+            </div>
+            
+            <button onclick="bukaModal('${nama}')" class="mt-6 w-full py-3 bg-zinc-800 hover:bg-amber-500 hover:text-black rounded-2xl text-sm">Input Manual</button>
+          </div>`;
+        
+        container.innerHTML += card;
       });
     }
 
-    function filterPasaran() {
-      const keyword = document.getElementById('search-input').value.toUpperCase();
-      const filtered = pasaranList.filter(p => p.includes(keyword));
-      renderDashboard(filtered);
+    function bukaModal(nama) {
+      document.getElementById("pilih-pasaran").value = nama;
+      document.getElementById("modal").classList.remove("hidden");
     }
 
-    function editResult(name) {
-      // ... (modal input sama seperti sebelumnya)
-      const data = results[name] || {};
-      document.getElementById('modal-pasaran').value = name;
-      document.getElementById('modal-tanggal').value = data.date || "26 Maret 2026";
-      document.getElementById('modal-angka-sah').value = data.angkaSah || "";
-      document.getElementById('modal-prize2').value = data.prize2 || "";
-      document.getElementById('modal-prize3').value = data.prize3 || "";
-      document.getElementById('input-modal').classList.remove('hidden');
-    }
-
-    function saveResult() { /* sama seperti kode sebelumnya */ 
-      const pasaran = document.getElementById('modal-pasaran').value;
-      results[pasaran] = {
-        date: document.getElementById('modal-tanggal').value,
-        angkaSah: document.getElementById('modal-angka-sah').value || '—',
-        prize2: document.getElementById('modal-prize2').value || '—',
-        prize3: document.getElementById('modal-prize3').value || '—'
+    function simpanHasil() {
+      const nama = document.getElementById("pilih-pasaran").value;
+      dataHasil[nama] = {
+        tanggal: document.getElementById("tgl").value,
+        prize1: document.getElementById("angka1").value || "—",
+        prize2: document.getElementById("angka2").value || "—",
+        prize3: document.getElementById("angka3").value || "—"
       };
-      localStorage.setItem('angkaSahResults', JSON.stringify(results));
-      hideInputModal();
-      renderDashboard();
+      localStorage.setItem('togelHasil', JSON.stringify(dataHasil));
+      document.getElementById("modal").classList.add("hidden");
+      renderDashboard(document.getElementById("search").value.toUpperCase());
     }
 
-    function hideInputModal() {
-      document.getElementById('input-modal').classList.add('hidden');
-    }
-
-    function previewTwitter() {
-      alert("Caption Twitter siap copy! (sama seperti sebelumnya)");
-      hideInputModal();
-    }
-
-    // AUTO REFRESH FOSHAN SETIAP 30 DETIK
-    function startAutoFoshan() {
-      fetchFoshan();                    // langsung ambil saat buka
-      setInterval(fetchFoshan, 30000);  // setiap 30 detik
+    function filterPasaran() {
+      const kata = document.getElementById("search").value.toUpperCase();
+      renderDashboard(kata);
     }
 
     window.onload = () => {
-      // isi select modal
-      const select = document.getElementById('modal-pasaran');
-      pasaranList.forEach(p => {
-        const opt = document.createElement('option');
+      // Isi dropdown
+      const select = document.getElementById("pilih-pasaran");
+      semuaPasaran.forEach(p => {
+        const opt = document.createElement("option");
         opt.value = p; opt.textContent = p;
         select.appendChild(opt);
       });
 
       renderDashboard();
-      startAutoFoshan();
+      ambilAuto();
+
+      // Auto refresh 15 detik
+      setInterval(() => {
+        ambilAuto();
+        renderDashboard(document.getElementById("search").value.toUpperCase());
+      }, 15000);
     };
   </script>
 </body>
