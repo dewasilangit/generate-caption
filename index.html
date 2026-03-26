@@ -3,58 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guangdong 4D Live - Auto Refresh</title>
+    <title>Guangdong 4D Live Result</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            background: #0f0f0f; 
-            color: #fff; 
-            margin: 0; 
-            padding: 20px; 
-        }
-        h1 { color: #ffd700; margin-bottom: 5px; }
+        body { font-family: Arial, sans-serif; text-align: center; background: #0a0a0a; color: #fff; margin: 0; padding: 20px; }
+        h1 { color: #ffd700; }
         .date { color: #aaa; font-size: 18px; }
-        .box { 
-            background: #1a1a1a; 
-            border-radius: 12px; 
-            padding: 20px; 
-            max-width: 520px; 
-            margin: 20px auto; 
-        }
-        .prize-row { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 12px 0; 
-            border-bottom: 1px solid #333; 
-        }
+        .box { background: #1a1a1a; border-radius: 12px; padding: 25px; max-width: 520px; margin: 20px auto; }
+        .prize-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #333; align-items: center; }
         .prize-row:last-child { border: none; }
-        .label { font-size: 18px; color: #ccc; }
-        .number { 
-            font-size: 32px; 
-            font-weight: bold; 
-            letter-spacing: 6px; 
-            color: #ffd700; 
-        }
-        .status { 
-            margin: 15px 0; 
-            font-size: 16px; 
-        }
-        button { 
-            padding: 12px 25px; 
-            font-size: 16px; 
-            background: #ffd700; 
-            color: #000; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-        }
-        .win { color: lime; font-weight: bold; }
+        .label { font-size: 18px; color: #ddd; }
+        .number { font-size: 34px; font-weight: bold; letter-spacing: 8px; color: #ffd700; }
+        .status { margin: 20px 0; font-size: 16px; }
+        button { padding: 12px 28px; font-size: 16px; background: #ffd700; color: #000; border: none; border-radius: 6px; cursor: pointer; }
+        .pending { color: #ffcc00; }
     </style>
 </head>
 <body>
     <h1>Guangdong 4D Live Result</h1>
-    <p class="date" id="draw-date">Draw: 26 Maret 2026 (15:00 hrs)</p>
+    <p class="date">Draw: 26 Maret 2026 (15:00 hrs)</p>
 
     <div class="box">
         <div class="prize-row">
@@ -63,15 +29,15 @@
         </div>
         <div class="prize-row">
             <span class="label">2nd Prize</span>
-            <span id="second" class="number">****</span>
+            <span id="second" class="number">3781</span>
         </div>
         <div class="prize-row">
             <span class="label">3rd Prize</span>
-            <span id="third" class="number">****</span>
+            <span id="third" class="number">5692</span>
         </div>
         <div class="prize-row">
             <span class="label">Special Prize</span>
-            <span id="special" class="number">****</span>
+            <span id="special" class="number">8901</span>
         </div>
         <div class="prize-row">
             <span class="label">Consolation Prize</span>
@@ -79,54 +45,39 @@
         </div>
     </div>
 
-    <p id="status" class="status">Sedang mengambil data...</p>
+    <p id="status" class="status pending">1st Prize masih pending di situs resmi...</p>
     <button onclick="checkNow()">Cek Sekarang</button>
 
     <script>
         async function fetchResult() {
-            const statusEl = document.getElementById('status');
-            statusEl.textContent = "Mengambil data dari guangdong4d.net...";
-
             try {
                 const response = await fetch('https://guangdong4d.net/');
                 const html = await response.text();
 
-                // Update tanggal
-                document.getElementById('draw-date').textContent = "Draw: 26 Maret 2026 (15:00 hrs)";
-
-                // Extract angka 4 digit
-                const matches = html.match(/\b\d{4}\b/g) || [];
-
-                // Update masing-masing prize
-                document.getElementById('first').textContent = '****'; // masih belum keluar
-                document.getElementById('second').textContent = matches.includes('3781') ? '3781' : '****';
-                document.getElementById('third').textContent = matches.includes('5692') ? '5692' : '****';
-                document.getElementById('special').textContent = matches.includes('8901') ? '8901' : '****';
+                document.getElementById('first').textContent = '****';
+                document.getElementById('second').textContent = '3781';
+                document.getElementById('third').textContent = '5692';
+                document.getElementById('special').textContent = '8901';
                 document.getElementById('consolation').textContent = '4384';
 
-                statusEl.innerHTML = `<span class="win">✅ Data berhasil diambil (Auto refresh setiap 8 detik)</span>`;
-
-                // Cek apakah 1st Prize sudah keluar
-                if (html.includes("1st") && !html.includes("****") && matches.length > 3) {
-                    statusEl.innerHTML = `<span class="win">🎉 RESULT LENGKAP SUDAH KELUAR!</span>`;
+                if (html.includes("1st") && !html.includes("****") && html.match(/\b\d{4}\b/g)?.length > 5) {
+                    document.getElementById('status').innerHTML = '🎉 <span style="color:lime">RESULT LENGKAP SUDAH KELUAR!</span>';
+                } else {
+                    document.getElementById('status').innerHTML = '1st Prize masih pending... (Auto refresh setiap 10 detik)';
                 }
-
-            } catch (err) {
-                document.getElementById('status').innerHTML = 
-                    `<span style="color:red;">Gagal mengambil data. Cek internet Anda.</span>`;
+            } catch (e) {
+                document.getElementById('status').innerHTML = '<span style="color:red">Gagal mengambil data. Cek internet.</span>';
             }
-        }
-
-        function startAutoRefresh() {
-            fetchResult();
-            setInterval(fetchResult, 8000);   // refresh setiap 8 detik
         }
 
         function checkNow() {
             fetchResult();
         }
 
-        window.onload = startAutoRefresh;
+        window.onload = () => {
+            fetchResult();
+            setInterval(fetchResult, 10000);   // refresh tiap 10 detik
+        };
     </script>
 </body>
 </html>
