@@ -3,70 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guangdong 4D Live Result</title>
+    <title>Guangdong 4D - Ultra Fast Auto</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background: #0a0a0a; color: #fff; margin: 0; padding: 20px; }
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            background: #0a0a0a; 
+            color: #fff; 
+            margin: 0; 
+            padding: 20px; 
+        }
         h1 { color: #ffd700; }
         .date { color: #aaa; font-size: 18px; }
-        .box { background: #1a1a1a; border-radius: 12px; padding: 25px; max-width: 520px; margin: 20px auto; }
-        .prize-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #333; align-items: center; }
+        .box { 
+            background: #1a1a1a; 
+            border-radius: 12px; 
+            padding: 25px; 
+            max-width: 520px; 
+            margin: 20px auto; 
+        }
+        .prize-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 14px 0; 
+            border-bottom: 1px solid #333; 
+            align-items: center; 
+        }
         .prize-row:last-child { border: none; }
         .label { font-size: 18px; color: #ddd; }
-        .number { font-size: 34px; font-weight: bold; letter-spacing: 8px; color: #ffd700; }
-        .status { margin: 20px 0; font-size: 16px; }
-        button { padding: 12px 28px; font-size: 16px; background: #ffd700; color: #000; border: none; border-radius: 6px; cursor: pointer; }
-        .pending { color: #ffcc00; }
+        .number { 
+            font-size: 36px; 
+            font-weight: bold; 
+            letter-spacing: 8px; 
+            color: #ffd700; 
+        }
+        .status { 
+            margin: 20px 0; 
+            font-size: 17px; 
+            font-weight: bold; 
+        }
+        .win { 
+            color: lime; 
+            animation: blink 1s infinite; 
+        }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        button { 
+            padding: 12px 28px; 
+            font-size: 16px; 
+            background: #ffd700; 
+            color: #000; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+        }
     </style>
 </head>
 <body>
-    <h1>Guangdong 4D Live Result</h1>
-    <p class="date">Draw: 26 Maret 2026 (15:00 hrs)</p>
+    <h1>Guangdong 4D - Ultra Fast Auto</h1>
+    <p class="date" id="draw-date">Draw: 26 Maret 2026 (15:00 hrs)</p>
 
     <div class="box">
-        <div class="prize-row">
-            <span class="label">1st Prize</span>
-            <span id="first" class="number">****</span>
-        </div>
-        <div class="prize-row">
-            <span class="label">2nd Prize</span>
-            <span id="second" class="number">3781</span>
-        </div>
-        <div class="prize-row">
-            <span class="label">3rd Prize</span>
-            <span id="third" class="number">5692</span>
-        </div>
-        <div class="prize-row">
-            <span class="label">Special Prize</span>
-            <span id="special" class="number">8901</span>
-        </div>
-        <div class="prize-row">
-            <span class="label">Consolation Prize</span>
-            <span id="consolation" class="number">4384</span>
-        </div>
+        <div class="prize-row"><span class="label">1st Prize</span><span id="first" class="number">****</span></div>
+        <div class="prize-row"><span class="label">2nd Prize</span><span id="second" class="number">****</span></div>
+        <div class="prize-row"><span class="label">3rd Prize</span><span id="third" class="number">****</span></div>
+        <div class="prize-row"><span class="label">Special Prize</span><span id="special" class="number">****</span></div>
+        <div class="prize-row"><span class="label">Consolation Prize</span><span id="consolation" class="number">****</span></div>
     </div>
 
-    <p id="status" class="status pending">1st Prize masih pending di situs resmi...</p>
+    <p id="status" class="status">Auto cek setiap 1 detik - Menunggu result...</p>
     <button onclick="checkNow()">Cek Sekarang</button>
 
     <script>
+        let lastFirst = '';
+
         async function fetchResult() {
+            const status = document.getElementById('status');
+
             try {
                 const response = await fetch('https://guangdong4d.net/');
                 const html = await response.text();
 
-                document.getElementById('first').textContent = '****';
-                document.getElementById('second').textContent = '3781';
-                document.getElementById('third').textContent = '5692';
-                document.getElementById('special').textContent = '8901';
-                document.getElementById('consolation').textContent = '4384';
+                const numbers = html.match(/\b\d{4}\b/g) || [];
 
-                if (html.includes("1st") && !html.includes("****") && html.match(/\b\d{4}\b/g)?.length > 5) {
-                    document.getElementById('status').innerHTML = '🎉 <span style="color:lime">RESULT LENGKAP SUDAH KELUAR!</span>';
-                } else {
-                    document.getElementById('status').innerHTML = '1st Prize masih pending... (Auto refresh setiap 10 detik)';
+                if (numbers.length >= 5) {
+                    const first = numbers[0] || '****';
+
+                    document.getElementById('first').textContent = first;
+                    document.getElementById('second').textContent = numbers[1] || '****';
+                    document.getElementById('third').textContent = numbers[2] || '****';
+                    document.getElementById('special').textContent = numbers[3] || '****';
+                    document.getElementById('consolation').textContent = numbers[4] || '****';
+
+                    // Deteksi kalau 1st Prize baru muncul
+                    if (first.length === 4 && first !== lastFirst && first !== '****') {
+                        lastFirst = first;
+                        status.innerHTML = `<span class="win">🎉 1ST PRIZE KELUAR: ${first} !</span>`;
+                        // Suara notifikasi
+                        new Audio('https://www.soundjay.com/buttons/beep-07.mp3').play().catch(() => {});
+                    } else {
+                        status.innerHTML = `<span class="win">✅ Sedang auto cek setiap 1 detik</span>`;
+                    }
                 }
+
             } catch (e) {
-                document.getElementById('status').innerHTML = '<span style="color:red">Gagal mengambil data. Cek internet.</span>';
+                status.innerHTML = `<span style="color:orange">Gagal ambil data (cek internet)</span>`;
             }
         }
 
@@ -74,9 +114,10 @@
             fetchResult();
         }
 
+        // Mulai otomatis
         window.onload = () => {
             fetchResult();
-            setInterval(fetchResult, 10000);   // refresh tiap 10 detik
+            setInterval(fetchResult, 1000);   // Setiap 1 detik
         };
     </script>
 </body>
