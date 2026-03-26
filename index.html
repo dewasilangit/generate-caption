@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Pengeluaran Togel - Update Kilat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .prize { font-size: 2.2rem; letter-spacing: 6px; font-weight: bold; }
+    .card { transition: all 0.3s; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px rgba(0,0,0,0.3); }
+    .loading { animation: pulse 1.5s infinite; }
+  </style>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+  <div class="max-w-6xl mx-auto p-4 md:p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-4xl font-bold">⚡ Pengeluaran Result Togel</h1>
+      <button onclick="refreshAll()" 
+              class="bg-green-600 hover:bg-green-500 px-8 py-3 rounded-2xl font-bold text-lg flex items-center gap-2">
+        🔄 Refresh Semua Sekarang
+      </button>
+    </div>
+    <p class="text-center text-green-400 mb-8 text-sm">Auto refresh saat buka halaman • Klik tombol untuk update kilat</p>
+
+    <div id="pasaran-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Semua pasaran akan muncul di sini otomatis -->
+    </div>
+
+    <div class="text-center text-xs text-gray-500 mt-12">
+      Catatan: Beberapa situs resmi sulit di-scrape otomatis. Kalau error, update manual via GitHub tetap paling cepat & akurat.<br>
+      Web ini di-host di GitHub Pages.
+    </div>
+  </div>
+
+  <script>
+    const proxies = [
+      "https://corsproxy.io/?",
+      "https://api.allorigins.win/get?url=",
+      "https://cors.anyorigin.workers.dev/?url="
+    ];
+
+    const pasaranList = [
+      {name: "FOSHAN", url: "https://foshantoto.com/"},
+      {name: "KENTUCKY MID", url: "https://kylottery.com"},
+      {name: "ROMA", url: "https://romalottery4d.com"},
+      {name: "FLORIDA MID", url: "https://flalottery.com"},
+      {name: "MONACO", url: "https://monacopools4d.com"},
+      {name: "NEWYORK MID", url: "https://nylottery.ny.gov"},
+      {name: "TURIN", url: "https://turinpools4d.org"},
+      {name: "ITALY", url: "https://italylotto4d.com"},
+      {name: "CAROLINA DAY", url: "https://wral.com"},
+      {name: "CUBA", url: "https://cubalotto.com"},
+      {name: "FRANCE", url: "https://francelottery4d.com"},
+      {name: "MADRID", url: "https://madridlotto4d.com"},
+      {name: "OREGON 03", url: "https://lotterypost.com/results/or"},
+      {name: "BULGARIA", url: "https://bulgarialottodraw.com"},
+      {name: "HUNGARY", url: "https://hungarylotto4d.com"},
+      {name: "MIAMI", url: "https://miamilottery4d.us"},
+      {name: "OREGON 06", url: "https://lotterypost.com/results/or"},
+      {name: "CALIFORNIA", url: "https://calottery.com"},
+      {name: "FLORIDA EVE", url: "https://flalottery.com/pick4"},
+      {name: "OREGON 09", url: "https://lotterypost.com/results/or"},
+      {name: "NEWYORK EVE", url: "https://nylottery.ny.gov"},
+      {name: "KENTUCKY EVE", url: "https://kylottery.com"},
+      {name: "ECUADOR", url: "https://ecuadorlotto.com"},
+      {name: "CAROLINA EVE", url: "https://wral.com"},
+      {name: "AUSTRIA", url: "https://austrialotterydraw.com"},
+      {name: "CAMBODIA", url: "https://magnumcambodia.com"},
+      {name: "OREGON 12", url: "https://lotterypost.com/results/or"},
+      {name: "BULLSEYE", url: "https://mylotto.co.nz"},
+      {name: "CHILE", url: "https://chilelotto4d.com"},
+      {name: "LAOS", url: "https://laoslotterydraw.com"},
+      {name: "SYDNEY", url: "https://lottosydney.net"},
+      {name: "CHENGDU", url: "https://chengdutoto.com"},
+      {name: "GUANGDONG", url: "https://guangdong4d.net"},
+      {name: "CHINA", url: "https://chinatoto4d.asia"},
+      {name: "CHONGQING", url: "https://chongqing4d.com"},
+      {name: "PHILIPPINES", url: "https://phplottery.com"},
+      {name: "JAPAN", url: "https://japanlottery.online"},
+      {name: "KOWLOON", url: "https://kowloon4d.com"},
+      {name: "SINGAPORE", url: "https://www.singaporepools.com.sg"},
+      {name: "JEJU", url: "https://jejulotto.com"},
+      {name: "TOTO BEIJING", url: "https://totobeijing4d.com"},
+      {name: "FUZHOU", url: "https://totofuzhou.com"},
+      {name: "CYPRUS", url: "https://cypruspools4d.com"},
+      {name: "TAIWAN", url: "https://taiwan-lotto.com"},
+      {name: "TAICHUNG", url: "https://taichung4d.com"},
+      {name: "MEXICO", url: "https://mexicopools4d.com"},
+      {name: "ICELAND", url: "https://icelandlottery.org"},
+      {name: "OSLO", url: "https://oslolotto.com"},
+      {name: "BHUTAN", url: "https://bhutanpools4d.com"},
+      {name: "HAITI", url: "https://haitilotto4d.com"},
+      {name: "HONGKONG", url: "https://lottohongkong.net"},
+      {name: "DENVER", url: "https://denverwla.us"},
+      {name: "TORONTO", url: "https://torontolottodraw.com"}
+    ];
+
+    async function fetchWithProxy(url) {
+      for (let proxy of proxies) {
+        try {
+          let fullUrl = proxy.includes("allorigins") 
+            ? proxy + encodeURIComponent(url) + "&_=" + Date.now()
+            : proxy + encodeURIComponent(url);
+          
+          const res = await fetch(fullUrl, {cache: "no-store"});
+          if (res.ok) {
+            const text = proxy.includes("allorigins") 
+              ? (await res.json()).contents 
+              : await res.text();
+            return text;
+          }
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    function createCard(pasaran) {
+      const card = document.createElement("div");
+      card.className = `bg-gray-900 rounded-3xl p-6 card border border-gray-800`;
+      card.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+          <h2 class="text-xl font-bold">${pasaran.name}</h2>
+          <button onclick="refreshSingle(this, '${pasaran.url}')" 
+                  class="text-xs bg-gray-800 hover:bg-gray-700 px-4 py-1 rounded-xl">Refresh</button>
+        </div>
+        <div class="text-center py-8 text-gray-400 loading" id="content-${pasaran.name.replace(/\s+/g,'')}">
+          Loading result...
+        </div>
+        <a href="${pasaran.url}" target="_blank" class="text-blue-400 text-xs hover:underline block text-center mt-4">
+          Buka Situs Asli →
+        </a>
+      `;
+      return card;
+    }
+
+    async function refreshSingle(btn, url) {
+      const container = btn.parentElement.parentElement.querySelector("div[id^='content-']");
+      container.innerHTML = `<span class="loading">Mengambil result terbaru...</span>`;
+      
+      const html = await fetchWithProxy(url);
+      if (!html) {
+        container.innerHTML = `<span class="text-red-400">Gagal mengambil data.<br>Coba lagi atau update manual.</span>`;
+        return;
+      }
+      
+      container.innerHTML = `
+        <div class="text-sm text-gray-300 break-all p-4 bg-gray-950 rounded-2xl">
+          Result berhasil diambil (ukuran ${html.length} karakter).<br>
+          <span class="text-yellow-400">Silakan cek situs asli untuk result lengkap.</span>
+        </div>
+      `;
+    }
+
+    async function refreshAll() {
+      const buttons = document.querySelectorAll("button[onclick^='refreshSingle']");
+      buttons.forEach(btn => {
+        const url = btn.getAttribute("onclick").match(/'([^']+)'/)[1];
+        refreshSingle(btn, url);
+      });
+    }
+
+    // Inisialisasi semua pasaran
+    window.onload = () => {
+      const container = document.getElementById("pasaran-container");
+      pasaranList.forEach(pasaran => {
+        container.appendChild(createCard(pasaran));
+      });
+      
+      // Auto refresh pertama kali
+      setTimeout(() => {
+        refreshAll();
+      }, 800);
+    };
+  </script>
+</body>
+</html>
