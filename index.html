@@ -5,51 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Winning Number Caption - JuaraTogel</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f0f23, #1a1a2e);
+      background: linear-gradient(135deg, #0a0a1f, #1a1a35);
       color: #fff;
       min-height: 100vh;
       padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .container {
-      max-width: 580px;
-      margin: 0 auto;
-      background: rgba(255,255,255,0.06);
-      border-radius: 16px;
-      padding: 25px;
-      border: 1px solid rgba(255,255,255,0.1);
+      max-width: 620px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 32px 28px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     }
 
     h1 {
       text-align: center;
-      font-size: 26px;
-      margin-bottom: 25px;
-      background: linear-gradient(90deg, #a855f7, #ec4899);
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 28px;
+      background: linear-gradient(90deg, #c026d3, #ec4899);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .select-box {
       position: relative;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
 
     .selected {
-      padding: 15px 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 12px;
-      font-size: 16px;
+      padding: 18px 24px;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(192, 38, 211, 0.3);
+      border-radius: 16px;
+      font-size: 17px;
       cursor: pointer;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(192, 38, 211, 0.15);
+    }
+
+    .selected:hover {
+      border-color: #c026d3;
+      box-shadow: 0 8px 25px rgba(192, 38, 211, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .selected::after {
+      content: "▼";
+      font-size: 18px;
+      transition: 0.3s;
     }
 
     .dropdown {
@@ -57,64 +77,88 @@
       top: 100%;
       left: 0;
       right: 0;
-      background: #1f1f2e;
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 12px;
-      margin-top: 8px;
-      max-height: 320px;
-      overflow-y: auto;
-      display: none;
-      z-index: 10;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      margin-top: 10px;
+      background: rgba(20, 20, 35, 0.98);
+      border: 1px solid rgba(192, 38, 211, 0.4);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      z-index: 100;
     }
 
     .dropdown.show {
-      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: #aaa;
     }
 
     .pasaran-item {
-      padding: 14px 18px;
+      padding: 14px 22px;
       cursor: pointer;
-      font-size: 15px;
+      transition: all 0.2s ease;
+      font-size: 15.5px;
     }
 
     .pasaran-item:hover {
-      background: #a855f7;
+      background: #c026d3;
+      padding-left: 28px;
     }
 
     .result-box {
-      background: rgba(0,0,0,0.4);
-      border-radius: 12px;
-      padding: 22px;
-      font-size: 17.5px;
-      line-height: 1.8;
-      min-height: 190px;
-      margin-bottom: 15px;
+      background: rgba(0, 0, 0, 0.45);
+      border-radius: 16px;
+      padding: 24px;
+      font-size: 18px;
+      line-height: 1.85;
+      min-height: 210px;
+      margin-bottom: 20px;
       white-space: pre-line;
       border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .copy-btn {
       width: 100%;
-      padding: 16px;
-      background: linear-gradient(90deg, #a855f7, #ec4899);
+      padding: 18px;
+      background: linear-gradient(90deg, #c026d3, #ec4899);
       color: white;
       border: none;
-      border-radius: 12px;
-      font-size: 17px;
+      border-radius: 16px;
+      font-size: 18px;
       font-weight: 600;
       cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(192, 38, 211, 0.4);
     }
 
     .copy-btn:hover {
-      opacity: 0.9;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(192, 38, 211, 0.5);
     }
 
     .info {
       text-align: center;
       margin-top: 12px;
       font-size: 14px;
-      color: #a1a1aa;
+      color: #c026d3;
+      font-weight: 500;
     }
   </style>
 </head>
@@ -123,17 +167,16 @@
   <div class="container">
     <h1>Winning Number Caption</h1>
 
-    <!-- Pilih Pasaran -->
     <div class="select-box">
       <div class="selected" id="selectedPasaran">
         Pilih Pasaran ▼
       </div>
       <div class="dropdown" id="dropdown">
-        <!-- Daftar pasaran akan dimasukkan lewat JavaScript -->
+        <input type="text" class="search-input" id="searchInput" placeholder="Cari pasaran...">
+        <div id="pasaranContainer"></div>
       </div>
     </div>
 
-    <!-- Hasil Caption -->
     <div class="result-box" id="result">
       Silakan pilih pasaran terlebih dahulu
     </div>
@@ -164,31 +207,33 @@
 
     const selectedEl = document.getElementById('selectedPasaran');
     const dropdown = document.getElementById('dropdown');
+    const searchInput = document.getElementById('searchInput');
+    const pasaranContainer = document.getElementById('pasaranContainer');
     const resultBox = document.getElementById('result');
     const copyBtn = document.getElementById('copyBtn');
     const statusDiv = document.getElementById('status');
 
     let currentIndex = -1;
 
-    // Isi dropdown dengan daftar pasaran
-    pasaranList.forEach((pasaran, index) => {
-      const item = document.createElement('div');
-      item.className = 'pasaran-item';
-      item.textContent = pasaran;
-      item.addEventListener('click', () => {
-        currentIndex = index;
-        selectedEl.textContent = pasaran + " ▼";
-        showCaption(pasaran);
-        dropdown.classList.remove('show');   // tutup dropdown
+    // Render daftar pasaran
+    function renderPasaran(filteredList) {
+      pasaranContainer.innerHTML = '';
+      filteredList.forEach((pasaran, index) => {
+        const item = document.createElement('div');
+        item.className = 'pasaran-item';
+        item.textContent = pasaran;
+        item.addEventListener('click', () => {
+          currentIndex = pasaranList.indexOf(pasaran);
+          selectedEl.textContent = pasaran + " ▼";
+          showCaption(pasaran);
+          dropdown.classList.remove('show');
+          searchInput.value = '';
+        });
+        pasaranContainer.appendChild(item);
       });
-      dropdown.appendChild(item);
-    });
+    }
 
-    // Klik untuk buka/tutup dropdown
-    selectedEl.addEventListener('click', () => {
-      dropdown.classList.toggle('show');
-    });
-
+    // Tampilkan caption
     function showCaption(pasaran) {
       const caption = `𝐖𝐈𝐍𝐍𝐈𝐍𝐆 𝐍𝐔𝐌𝐁𝐄𝐑
 PASARAN : ${pasaran}
@@ -201,16 +246,30 @@ SAH >>
       copyBtn.style.display = 'block';
     }
 
-    // Tombol Copy + Auto Next
+    // Search functionality
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toUpperCase().trim();
+      const filtered = pasaranList.filter(p => p.includes(query));
+      renderPasaran(filtered);
+    });
+
+    // Toggle dropdown
+    selectedEl.addEventListener('click', () => {
+      dropdown.classList.toggle('show');
+      if (dropdown.classList.contains('show')) {
+        searchInput.focus();
+        renderPasaran(pasaranList); // tampilkan semua saat dibuka
+      }
+    });
+
+    // Copy & Next
     copyBtn.addEventListener('click', () => {
       if (currentIndex === -1) return;
 
       const textToCopy = resultBox.textContent;
-
       navigator.clipboard.writeText(textToCopy).then(() => {
-        statusDiv.textContent = `✅ Copied!`;
+        statusDiv.textContent = '✅ Copied!';
 
-        // Auto next
         if (currentIndex < pasaranList.length - 1) {
           currentIndex++;
           const nextPasaran = pasaranList[currentIndex];
@@ -221,11 +280,11 @@ SAH >>
           copyBtn.style.display = 'none';
         }
 
-        setTimeout(() => statusDiv.textContent = '', 1800);
+        setTimeout(() => statusDiv.textContent = '', 2000);
       });
     });
 
-    // Klik di luar dropdown untuk menutup
+    // Tutup dropdown kalau klik di luar
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.select-box')) {
         dropdown.classList.remove('show');
