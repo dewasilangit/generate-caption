@@ -3,237 +3,183 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generator Caption Twitter - Caption Juara</title>
+  <title>Winning Number Caption - JuaraTogel</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #0f0f23, #1a1a2e);
-      color: #ffffff;
+      color: #fff;
       min-height: 100vh;
       padding: 20px;
     }
-
     .container {
-      max-width: 680px;
-      margin: 40px auto;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 40px 30px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
     }
-
+    .sidebar {
+      flex: 1;
+      min-width: 280px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .main {
+      flex: 2;
+      min-width: 320px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
     h1 {
       text-align: center;
-      font-size: 32px;
-      margin-bottom: 8px;
+      margin-bottom: 30px;
+      font-size: 28px;
       background: linear-gradient(90deg, #a855f7, #ec4899);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
-    p.subtitle {
+    .pasaran-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+    }
+    .pasaran-btn {
+      padding: 14px 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
       text-align: center;
-      color: #a1a1aa;
-      margin-bottom: 40px;
-      font-size: 18px;
-    }
-
-    .input-area {
-      margin-bottom: 30px;
-    }
-
-    textarea {
-      width: 100%;
-      height: 160px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 20px;
-      color: white;
-      font-size: 16px;
-      resize: none;
-      outline: none;
+      cursor: pointer;
+      font-weight: 500;
       transition: all 0.3s;
     }
-
-    textarea:focus {
+    .pasaran-btn:hover, .pasaran-btn.active {
+      background: #a855f7;
       border-color: #a855f7;
-      box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.2);
+      transform: translateY(-2px);
     }
-
-    .btn-generate {
+    .result {
+      background: rgba(0,0,0,0.3);
+      border-radius: 16px;
+      padding: 25px;
+      font-size: 18px;
+      line-height: 1.8;
+      min-height: 280px;
+      white-space: pre-line;
+    }
+    .copy-btn {
+      margin-top: 20px;
       width: 100%;
       padding: 16px;
       background: linear-gradient(90deg, #a855f7, #ec4899);
       color: white;
       border: none;
-      border-radius: 16px;
-      font-size: 18px;
+      border-radius: 12px;
+      font-size: 17px;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 10px;
-      transition: all 0.3s;
     }
-
-    .btn-generate:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 20px rgba(168, 85, 247, 0.4);
+    .copy-btn:hover {
+      opacity: 0.9;
     }
-
-    .result {
-      margin-top: 30px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
-      padding: 25px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      display: none;
-    }
-
-    .result.show {
-      display: block;
-    }
-
-    .caption-text {
-      font-size: 17px;
-      line-height: 1.6;
-      color: #e0e0e0;
-      margin-bottom: 20px;
-      white-space: pre-wrap;
-    }
-
-    .btn-copy {
-      padding: 12px 24px;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      cursor: pointer;
+    .status {
+      text-align: center;
+      margin-top: 15px;
+      color: #22c55e;
       font-weight: 500;
-      transition: all 0.3s;
-    }
-
-    .btn-copy:hover {
-      background: #a855f7;
-      border-color: #a855f7;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 30px;
-      color: #a1a1aa;
-      display: none;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 50px;
-      color: #71717a;
-      font-size: 14px;
     }
   </style>
 </head>
 <body>
+  <h1>Winning Number Caption Generator</h1>
+  
   <div class="container">
-    <h1>Caption Juara</h1>
-    <p class="subtitle">Generator Caption Twitter / X Terbaik</p>
-
-    <div class="input-area">
-      <textarea id="inputText" placeholder="Masukkan kata kunci atau topikmu di sini...&#10;Contoh: jualan es teh, motivasi pagi, liburan ke bali"></textarea>
-      <button class="btn-generate" id="generateBtn">🚀 Generate Caption</button>
+    <!-- Daftar Pasaran -->
+    <div class="sidebar">
+      <h2 style="margin-bottom:15px; text-align:center;">Daftar Pasaran</h2>
+      <div class="pasaran-list" id="pasaranList"></div>
     </div>
 
-    <div class="loading" id="loading">Sedang membuat caption juara...</div>
-
-    <div class="result" id="result">
-      <div class="caption-text" id="captionOutput"></div>
-      <button class="btn-copy" id="copyBtn">📋 Copy Caption</button>
+    <!-- Hasil Caption -->
+    <div class="main">
+      <h2 style="margin-bottom:20px; text-align:center;">Preview Caption</h2>
+      <div class="result" id="result">
+        Klik salah satu pasaran di sebelah kiri untuk generate caption
+      </div>
+      <button class="copy-btn" id="copyBtn" style="display:none;">📋 Copy Caption</button>
+      <div class="status" id="status"></div>
     </div>
-  </div>
-
-  <div class="footer">
-    Dibuat ulang dengan ❤️ • Mirip dengan CaptionJuara
   </div>
 
   <script>
-    const generateBtn = document.getElementById('generateBtn');
-    const inputText = document.getElementById('inputText');
-    const loading = document.getElementById('loading');
-    const result = document.getElementById('result');
-    const captionOutput = document.getElementById('captionOutput');
-    const copyBtn = document.getElementById('copyBtn');
-
-    // Daftar template caption (bisa kamu tambah sendiri)
-    const templates = [
-      "🔥 {keyword} bikin hari ini makin seru! Siapa yang ikutan? 👀",
-      "Gak nyangka {keyword} bisa segini enaknya! ✅ Recommended banget!",
-      "Pagi-pagi udah excited sama {keyword}. Siap gaspol hari ini! 💪",
-      "Baru coba {keyword} dan langsung ketagihan! Kamu udah pernah? 😍",
-      "Tips juara: {keyword} adalah kunci sukses di 2026! 📈",
-      "Mau viral? Coba posting tentang {keyword} dengan gaya ini 🔥",
-      "Dari nol sampai hero berkat {keyword}. Cerita lengkap di thread ini 👇",
-      "Siapa bilang {keyword} susah? Ternyata gampang banget kok! 😉"
+    const pasaranList = [
+      "KENTUCKY MID", "ROMA", "FLORIDA MID", "MONACO", "NEWYORK MID",
+      "TURIN", "ITALY", "CAROLINA DAY", "CUBA", "FRANCE",
+      "MADRID", "OREGON 03", "BULGARIA", "HUNGARY", "MIAMI",
+      "OREGON 06", "CALIFORNIA", "FLORIDA EVE", "OREGON 09", "NEWYORK EVE",
+      "KENTUCKY EVE", "CAROLINA EVE", "ECUADOR", "AUSTRIA", "CAMBODIA",
+      "FOSHAN", "OREGON 12", "BULLSEYE", "CHILE", "LAOS",
+      "TTM 4D-P1", "SYDNEY", "CHENGDU", "GUANGDONG", "TTM 5D-P1",
+      "CHINA", "CHONGQING", "TTM 4D-P2", "PHILIPPINES", "KINGKONG P1",
+      "JAPAN", "KOWLOON", "SINGAPORE", "JEJU LOTTO", "TOTO BEIJING",
+      "TTM 4D-P3", "TOTO FUZHOU", "CYPRUS", "TAIWAN", "TAICHUNG",
+      "MEXICO", "TTM 5D-P2", "ICELAND", "OSLO", "TTM 4D-P4",
+      "BHUTAN", "HAITI", "HONGKONG", "TTM 4D-P5", "KINGKONG P2",
+      "DENVER", "TORONTO", "TTM 4D-P6"
     ];
 
-    function generateCaption(keyword) {
-      if (!keyword.trim()) {
-        return "Masukkan kata kunci dulu ya biar aku bisa bantu buat caption keren! ✨";
-      }
+    const pasaranContainer = document.getElementById('pasaranList');
+    const resultDiv = document.getElementById('result');
+    const copyBtn = document.getElementById('copyBtn');
+    const statusDiv = document.getElementById('status');
 
-      const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
-      let caption = randomTemplate.replace("{keyword}", keyword);
+    let currentPasaran = '';
 
-      // Tambah variasi emoji dan hashtag
-      const hashtags = ["#CaptionJuara", "#TwitterTips", "#ContentCreator", "#Viral"];
-      caption += "\n\n" + hashtags.join(" ");
-
-      return caption;
-    }
-
-    generateBtn.addEventListener('click', () => {
-      const keyword = inputText.value.trim();
-
-      // Tampilkan loading
-      loading.style.display = 'block';
-      result.classList.remove('show');
-
-      // Simulasi delay generate (seperti AI)
-      setTimeout(() => {
-        const generated = generateCaption(keyword);
-        captionOutput.textContent = generated;
+    // Buat tombol pasaran
+    pasaranList.forEach(pasaran => {
+      const btn = document.createElement('div');
+      btn.className = 'pasaran-btn';
+      btn.textContent = pasaran;
+      btn.addEventListener('click', () => {
+        currentPasaran = pasaran;
         
-        loading.style.display = 'none';
-        result.classList.add('show');
-      }, 1200);
-    });
+        // Highlight tombol aktif
+        document.querySelectorAll('.pasaran-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
 
-    // Copy ke clipboard
-    copyBtn.addEventListener('click', () => {
-      const text = captionOutput.textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        const originalText = copyBtn.textContent;
-        copyBtn.textContent = "✅ Berhasil dicopy!";
-        setTimeout(() => {
-          copyBtn.textContent = originalText;
-        }, 2000);
+        // Generate teks
+        const text = `𝐖𝐈𝐍𝐍𝐈𝐍𝐆 𝐍𝐔𝐌𝐁𝐄𝐑
+PASARAN : ${pasaran}
+SAH >>
+==========================
+#juaratogel #juaratogellogin
+#resultjuaratogel`;
+
+        resultDiv.textContent = text;
+        copyBtn.style.display = 'block';
       });
+      pasaranContainer.appendChild(btn);
     });
 
-    // Enter key support
-    inputText.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        generateBtn.click();
-      }
+    // Tombol Copy
+    copyBtn.addEventListener('click', () => {
+      if (!currentPasaran) return;
+      
+      const textToCopy = resultDiv.textContent;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        statusDiv.textContent = '✅ Caption berhasil dicopy!';
+        setTimeout(() => {
+          statusDiv.textContent = '';
+        }, 2500);
+      });
     });
   </script>
 </body>
