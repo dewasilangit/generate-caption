@@ -3,82 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Winning Number Caption - JuaraTogel</title>
+  <title>Winning Number - JuaraTogel</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #0f0f23, #1a1a2e);
       color: #fff;
       min-height: 100vh;
-      padding: 20px;
+      padding: 15px;
     }
+
     .container {
-      max-width: 1100px;
+      max-width: 620px;
       margin: 0 auto;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .sidebar {
-      flex: 1;
-      min-width: 280px;
       background: rgba(255,255,255,0.06);
       border-radius: 16px;
-      padding: 20px;
+      padding: 25px;
       border: 1px solid rgba(255,255,255,0.1);
     }
-    .main {
-      flex: 2;
-      min-width: 320px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 16px;
-      padding: 30px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+
     h1 {
       text-align: center;
-      margin-bottom: 30px;
-      font-size: 28px;
+      font-size: 26px;
+      margin-bottom: 25px;
       background: linear-gradient(90deg, #a855f7, #ec4899);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+
     .pasaran-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+      margin-bottom: 30px;
     }
+
     .pasaran-btn {
-      padding: 14px 12px;
+      padding: 12px 10px;
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 12px;
+      border-radius: 10px;
       text-align: center;
       cursor: pointer;
+      font-size: 14px;
       font-weight: 500;
-      transition: all 0.3s;
+      transition: all 0.2s;
     }
-    .pasaran-btn:hover, .pasaran-btn.active {
+
+    .pasaran-btn:hover {
       background: #a855f7;
       border-color: #a855f7;
-      transform: translateY(-2px);
     }
-    .result {
-      background: rgba(0,0,0,0.3);
-      border-radius: 16px;
-      padding: 25px;
-      font-size: 18px;
-      line-height: 1.8;
-      min-height: 280px;
+
+    .pasaran-btn.active {
+      background: #a855f7;
+      border-color: #a855f7;
+      font-weight: 600;
+    }
+
+    .result-box {
+      background: rgba(0,0,0,0.4);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 17.5px;
+      line-height: 1.75;
+      min-height: 180px;
+      margin-bottom: 15px;
       white-space: pre-line;
+      border: 1px solid rgba(255,255,255,0.1);
     }
+
     .copy-btn {
-      margin-top: 20px;
       width: 100%;
-      padding: 16px;
+      padding: 15px;
       background: linear-gradient(90deg, #a855f7, #ec4899);
       color: white;
       border: none;
@@ -86,37 +91,36 @@
       font-size: 17px;
       font-weight: 600;
       cursor: pointer;
+      margin-bottom: 10px;
     }
+
     .copy-btn:hover {
       opacity: 0.9;
     }
-    .status {
+
+    .info {
       text-align: center;
-      margin-top: 15px;
-      color: #22c55e;
-      font-weight: 500;
+      font-size: 14px;
+      color: #a1a1aa;
     }
   </style>
 </head>
 <body>
-  <h1>Winning Number Caption Generator</h1>
-  
+
   <div class="container">
-    <!-- Daftar Pasaran -->
-    <div class="sidebar">
-      <h2 style="margin-bottom:15px; text-align:center;">Daftar Pasaran</h2>
-      <div class="pasaran-list" id="pasaranList"></div>
+    <h1>Winning Number Caption</h1>
+
+    <div class="pasaran-list" id="pasaranList"></div>
+
+    <div class="result-box" id="result">
+      Klik salah satu pasaran di atas
     </div>
 
-    <!-- Hasil Caption -->
-    <div class="main">
-      <h2 style="margin-bottom:20px; text-align:center;">Preview Caption</h2>
-      <div class="result" id="result">
-        Klik salah satu pasaran di sebelah kiri untuk generate caption
-      </div>
-      <button class="copy-btn" id="copyBtn" style="display:none;">📋 Copy Caption</button>
-      <div class="status" id="status"></div>
-    </div>
+    <button class="copy-btn" id="copyBtn" style="display: none;">
+      📋 Copy & Next Pasaran
+    </button>
+
+    <div class="info" id="status"></div>
   </div>
 
   <script>
@@ -137,48 +141,65 @@
     ];
 
     const pasaranContainer = document.getElementById('pasaranList');
-    const resultDiv = document.getElementById('result');
+    const resultBox = document.getElementById('result');
     const copyBtn = document.getElementById('copyBtn');
     const statusDiv = document.getElementById('status');
 
-    let currentPasaran = '';
+    let currentIndex = -1;
 
-    // Buat tombol pasaran
-    pasaranList.forEach(pasaran => {
+    // Buat daftar pasaran
+    pasaranList.forEach((pasaran, index) => {
       const btn = document.createElement('div');
       btn.className = 'pasaran-btn';
       btn.textContent = pasaran;
       btn.addEventListener('click', () => {
-        currentPasaran = pasaran;
-        
-        // Highlight tombol aktif
-        document.querySelectorAll('.pasaran-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        currentIndex = index;
+        showCaption(pasaran);
+      });
+      pasaranContainer.appendChild(btn);
+    });
 
-        // Generate teks
-        const text = `𝐖𝐈𝐍𝐍𝐈𝐍𝐆 𝐍𝐔𝐌𝐁𝐄𝐑
+    function showCaption(pasaran) {
+      const caption = `𝐖𝐈𝐍𝐍𝐈𝐍𝐆 𝐍𝐔𝐌𝐁𝐄𝐑
 PASARAN : ${pasaran}
 SAH >>
 ==========================
 #juaratogel #juaratogellogin
 #resultjuaratogel`;
 
-        resultDiv.textContent = text;
-        copyBtn.style.display = 'block';
-      });
-      pasaranContainer.appendChild(btn);
-    });
+      resultBox.textContent = caption;
+      copyBtn.style.display = 'block';
+    }
 
-    // Tombol Copy
+    // Tombol Copy + Auto Next
     copyBtn.addEventListener('click', () => {
-      if (!currentPasaran) return;
-      
-      const textToCopy = resultDiv.textContent;
+      if (currentIndex === -1) return;
+
+      const currentPasaran = pasaranList[currentIndex];
+      const textToCopy = resultBox.textContent;
+
       navigator.clipboard.writeText(textToCopy).then(() => {
-        statusDiv.textContent = '✅ Caption berhasil dicopy!';
+        statusDiv.textContent = `✅ Copied: ${currentPasaran}`;
+
+        // Auto next ke pasaran berikutnya
+        if (currentIndex < pasaranList.length - 1) {
+          currentIndex++;
+          const nextPasaran = pasaranList[currentIndex];
+          showCaption(nextPasaran);
+
+          // Highlight tombol aktif
+          document.querySelectorAll('.pasaran-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', i === currentIndex);
+          });
+        } else {
+          statusDiv.textContent = '✅ Semua pasaran sudah selesai!';
+          copyBtn.style.display = 'none';
+        }
+
+        // Hilangkan status setelah 2 detik
         setTimeout(() => {
           statusDiv.textContent = '';
-        }, 2500);
+        }, 2000);
       });
     });
   </script>
