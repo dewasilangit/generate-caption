@@ -3,26 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Winning Number - JuaraTogel</title>
+  <title>Winning Number Caption - JuaraTogel</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #0f0f23, #1a1a2e);
       color: #fff;
       min-height: 100vh;
-      padding: 15px;
+      padding: 20px;
     }
 
     .container {
-      max-width: 620px;
+      max-width: 580px;
       margin: 0 auto;
       background: rgba(255,255,255,0.06);
       border-radius: 16px;
@@ -39,43 +35,60 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .pasaran-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 8px;
-      margin-bottom: 30px;
+    .select-box {
+      position: relative;
+      margin-bottom: 25px;
     }
 
-    .pasaran-btn {
-      padding: 12px 10px;
+    .selected {
+      padding: 15px 18px;
       background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 10px;
-      text-align: center;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      font-size: 16px;
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .pasaran-btn:hover {
-      background: #a855f7;
-      border-color: #a855f7;
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #1f1f2e;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      margin-top: 8px;
+      max-height: 320px;
+      overflow-y: auto;
+      display: none;
+      z-index: 10;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     }
 
-    .pasaran-btn.active {
+    .dropdown.show {
+      display: block;
+    }
+
+    .pasaran-item {
+      padding: 14px 18px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .pasaran-item:hover {
       background: #a855f7;
-      border-color: #a855f7;
-      font-weight: 600;
     }
 
     .result-box {
       background: rgba(0,0,0,0.4);
       border-radius: 12px;
-      padding: 20px;
+      padding: 22px;
       font-size: 17.5px;
-      line-height: 1.75;
-      min-height: 180px;
+      line-height: 1.8;
+      min-height: 190px;
       margin-bottom: 15px;
       white-space: pre-line;
       border: 1px solid rgba(255,255,255,0.1);
@@ -83,7 +96,7 @@
 
     .copy-btn {
       width: 100%;
-      padding: 15px;
+      padding: 16px;
       background: linear-gradient(90deg, #a855f7, #ec4899);
       color: white;
       border: none;
@@ -91,7 +104,6 @@
       font-size: 17px;
       font-weight: 600;
       cursor: pointer;
-      margin-bottom: 10px;
     }
 
     .copy-btn:hover {
@@ -100,6 +112,7 @@
 
     .info {
       text-align: center;
+      margin-top: 12px;
       font-size: 14px;
       color: #a1a1aa;
     }
@@ -110,10 +123,19 @@
   <div class="container">
     <h1>Winning Number Caption</h1>
 
-    <div class="pasaran-list" id="pasaranList"></div>
+    <!-- Pilih Pasaran -->
+    <div class="select-box">
+      <div class="selected" id="selectedPasaran">
+        Pilih Pasaran ▼
+      </div>
+      <div class="dropdown" id="dropdown">
+        <!-- Daftar pasaran akan dimasukkan lewat JavaScript -->
+      </div>
+    </div>
 
+    <!-- Hasil Caption -->
     <div class="result-box" id="result">
-      Klik salah satu pasaran di atas
+      Silakan pilih pasaran terlebih dahulu
     </div>
 
     <button class="copy-btn" id="copyBtn" style="display: none;">
@@ -140,23 +162,31 @@
       "DENVER", "TORONTO", "TTM 4D-P6"
     ];
 
-    const pasaranContainer = document.getElementById('pasaranList');
+    const selectedEl = document.getElementById('selectedPasaran');
+    const dropdown = document.getElementById('dropdown');
     const resultBox = document.getElementById('result');
     const copyBtn = document.getElementById('copyBtn');
     const statusDiv = document.getElementById('status');
 
     let currentIndex = -1;
 
-    // Buat daftar pasaran
+    // Isi dropdown dengan daftar pasaran
     pasaranList.forEach((pasaran, index) => {
-      const btn = document.createElement('div');
-      btn.className = 'pasaran-btn';
-      btn.textContent = pasaran;
-      btn.addEventListener('click', () => {
+      const item = document.createElement('div');
+      item.className = 'pasaran-item';
+      item.textContent = pasaran;
+      item.addEventListener('click', () => {
         currentIndex = index;
+        selectedEl.textContent = pasaran + " ▼";
         showCaption(pasaran);
+        dropdown.classList.remove('show');   // tutup dropdown
       });
-      pasaranContainer.appendChild(btn);
+      dropdown.appendChild(item);
+    });
+
+    // Klik untuk buka/tutup dropdown
+    selectedEl.addEventListener('click', () => {
+      dropdown.classList.toggle('show');
     });
 
     function showCaption(pasaran) {
@@ -175,32 +205,31 @@ SAH >>
     copyBtn.addEventListener('click', () => {
       if (currentIndex === -1) return;
 
-      const currentPasaran = pasaranList[currentIndex];
       const textToCopy = resultBox.textContent;
 
       navigator.clipboard.writeText(textToCopy).then(() => {
-        statusDiv.textContent = `✅ Copied: ${currentPasaran}`;
+        statusDiv.textContent = `✅ Copied!`;
 
-        // Auto next ke pasaran berikutnya
+        // Auto next
         if (currentIndex < pasaranList.length - 1) {
           currentIndex++;
           const nextPasaran = pasaranList[currentIndex];
+          selectedEl.textContent = nextPasaran + " ▼";
           showCaption(nextPasaran);
-
-          // Highlight tombol aktif
-          document.querySelectorAll('.pasaran-btn').forEach((btn, i) => {
-            btn.classList.toggle('active', i === currentIndex);
-          });
         } else {
           statusDiv.textContent = '✅ Semua pasaran sudah selesai!';
           copyBtn.style.display = 'none';
         }
 
-        // Hilangkan status setelah 2 detik
-        setTimeout(() => {
-          statusDiv.textContent = '';
-        }, 2000);
+        setTimeout(() => statusDiv.textContent = '', 1800);
       });
+    });
+
+    // Klik di luar dropdown untuk menutup
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.select-box')) {
+        dropdown.classList.remove('show');
+      }
     });
   </script>
 </body>
